@@ -6,7 +6,7 @@ import GroupsController from './groups.controller.js';
 const router = express.Router();
 
 router.route('/users').get(UsersController.apiGetAllUsers);
-router.route('/users/:id').get(UsersController.apiGetUserById);
+router.route('/users/:id').post(UsersController.apiGetUserById);
 router.route('/users').post(UsersController.apiPostUser);
 
 router.route('/groups').get(GroupsController.apiGetAllGroups);
