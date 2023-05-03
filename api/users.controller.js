@@ -35,6 +35,23 @@ export default class UsersController {
         }
     }
 
+    static async apiUpdateUser(req, res, next) {
+        try {
+            const id = req.body.userDetails.username || {};
+            const password = req.body.userDetails.password || {};
+            const groups = req.body.userDetails.groups || {};
+            const response = await UsersDAO.updateUser(id, password, groups);
+            var { error } = response;
+            if (error) {
+                res.status(400).json({ error: "Unable to update user" });
+            } else {
+                res.json({ status: "Successfully updated user" });
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     static async apiGetUserById(req, res, next) {
         try {
             const id = req.body.userDetails.username || {};

@@ -38,12 +38,27 @@ export default class UsersDAO {
             const userData = {
                 username: user.username,
                 password: user.password,
+                groups: []
             };
-            const result = await users.insertOne({ _id: userData.username, password: userData.password });
+            const result = await users.insertOne({ _id: userData.username, password: userData.password, groups: userData.groups });
             return { message: "Added New User successfully", insertedId: result.insertedId };
         } catch (error) {
             console.error(`Unable to add/update user: ${error}`);
             return { error: error.message };
         }
     }
+
+    static async updateUser(id, password, groups) {
+        try {
+            const updateResponse = await users.updateOne(
+                { _id: id },
+                { $set: { password: password, groups: groups } }
+            );
+            return updateResponse;
+        } catch (error) {
+            console.error(`Unable to update user: ${error}`);
+            return { error: error.message };
+        }
+    }
+
 }
