@@ -13,16 +13,20 @@ export default class yelpAPI {
         const categories = userPreferences.categories;
         const searchRequest = {
             location: userPreferences.location,
-            categories: categories,
             radius: userPreferences.radius || 10000,
+            term: categories.join(','),
         };
         try {
             const response = await client.search(searchRequest);
             const businesses = response.jsonBody.businesses;
-            const filteredBusinesses = businesses.filter(business =>
-                categories.every(category => business.categories.some(cat => cat.alias === category))
-            );
-            if (filteredBusinesses.length > 0) {
+            const filteredBusinesses = businesses.filter((business) => {
+                const businessCategories = business.categories.map((cat) => cat.title);
+                // console.log(businessCategories);
+                return categories.every((category) =>
+                    businessCategories.includes(category)
+                );
+            });
+            if (filteredBusinesses.length >= categories.length) {
                 res.status(200).json({ yelpAPI: filteredBusinesses });
             } else {
                 res.status(201).json({ yelpAPI: businesses });
@@ -31,6 +35,8 @@ export default class yelpAPI {
             res.status(500).json({ error: error.message });
         }
     }
+
+
 
     static async apiGetBusinessAndReviewsById(req, res, next) {
         const businessId = req.params.id || {};
