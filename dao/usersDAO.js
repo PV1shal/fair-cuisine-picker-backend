@@ -59,7 +59,7 @@ export default class UsersDAO {
 
     static async updateUser(id, password, groups) {
         try {
-            const updateResponse = await users.updateOne(
+            const updateResponse = await users.findOneAndUpdate(
                 { _id: id },
                 { $set: { password: password, groups: groups } }
             );
