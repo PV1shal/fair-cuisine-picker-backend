@@ -26,6 +26,15 @@ export default class UsersDAO {
 
     static async getUserById(id, password) {
         try {
+            return await users.findOne({ _id: id });
+        } catch (error) {
+            console.error(`Unable to get user: ${e}`);
+            return { error: e.message };
+        }
+    }
+
+    static async getUserByIdLogin(id, password) {
+        try {
             return await users.findOne({ _id: id, password: password });
         } catch (error) {
             console.error(`Unable to get user: ${e}`);

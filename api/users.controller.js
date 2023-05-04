@@ -54,9 +54,24 @@ export default class UsersController {
 
     static async apiGetUserById(req, res, next) {
         try {
+            const id = req.params.id || {};
+            const response = await UsersDAO.getUserById(id);
+            var { error } = response;
+            if (error) {
+                res.status(400).json({ error: "Unable to get user" });
+            } else {
+                res.json({ user: response });
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    static async apiGetUserByIdLogin(req, res, next) {
+        try {
             const id = req.body.userDetails.username || {};
             const password = req.body.userDetails.password || {};
-            const response = await UsersDAO.getUserById(id, password);
+            const response = await UsersDAO.getUserByIdLogin(id, password);
             var { error } = response;
             if (error) {
                 res.status(400).json({ error: "Unable to get user" });

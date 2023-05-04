@@ -6,7 +6,8 @@ import GroupsController from './groups.controller.js';
 const router = express.Router();
 
 router.route('/users').get(UsersController.apiGetAllUsers);
-router.route('/users/:id').post(UsersController.apiGetUserById);
+router.route('/users/:id').get(UsersController.apiGetUserById);
+router.route('/users/:id').post(UsersController.apiGetUserByIdLogin);
 router.route('/users').post(UsersController.apiPostUser);
 router.route('/users/:id').put(UsersController.apiUpdateUser);
 
