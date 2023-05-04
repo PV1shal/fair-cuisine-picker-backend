@@ -15,7 +15,7 @@ router.route('/groups').get(GroupsController.apiGetAllGroups);
 router.route('/groups').post(GroupsController.apiPostGroup);
 router.route('/groups/:id').get(GroupsController.apiGetGroupById);
 
-router.route('/yelpAPI').get(yelpAPI.apiGetYelpAPI);
+router.route('/yelpAPI').put(yelpAPI.apiGetYelpAPI);
 router.route('/yelpAPI/business/:id').get(yelpAPI.apiGetBusinessAndReviewsById);
 
 export default router;
