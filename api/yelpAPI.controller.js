@@ -3,34 +3,40 @@ import yelp from 'yelp-fusion';
 
 // Place holder for Yelp Fusion's API Key. Grab them
 // from https://www.yelp.com/developers/v3/manage_app
-const apiKey = '-XWAGMmaXC5v_RZzrN9aov6aNOMaBS4HBXR7Jd0J-Rh5Yk8lTDNFBt_fIm5G4NEb2RYADVTTkMku_ENfFlflPTPCXBAJ4sLBEO01Q1BeY_KFg3bIxpOIS6vKfhRQZHYx';
+const apiKey = 'uwP7e36zc9a5e7N_GovpMHDJ_v_pcMmRzrHuzvuihfvgD5R8nocAlhUKBPXhgWh_KDbOyoW7D7nRreubcoFjS8vIIM-4CoOqgcHbIfnLsjnZCFvrRMXmTOHN4KlUZHYx';
 
 const client = yelp.client(apiKey);
 
 export default class yelpAPI {
     static async apiGetYelpAPI(req, res, next) {
-        const userPreferences = req.body.userPreferences || {};
-        const categories = userPreferences.categories;
-        const searchRequest = {
-            location: userPreferences.location,
-            radius: userPreferences.radius || 10000,
-            term: categories.join(','),
-            categories: "restaurants",
-        };
         try {
+            const categoriesResponse = await client.allCategories();
+            const categoriesMap = new Map();
+            categoriesResponse.jsonBody.categories.forEach((category) => {
+                categoriesMap.set(category.title, category.alias);
+            });
+
+            const categoryAliases = req.body.userPreferences.categories.map(
+                (category) => categoriesMap.get(category)
+            );
+
+            const searchRequest = {
+                location: req.body.userPreferences.location,
+                radius: req.body.userPreferences.radius || 10000,
+                categories: categoryAliases.join(","),
+            };
             const response = await client.search(searchRequest);
             const businesses = response.jsonBody.businesses;
-            const filteredBusinesses = businesses.filter((business) => {
-                const businessCategories = business.categories.map((cat) => cat.title);
-                // console.log(businessCategories);
-                return categories.every((category) =>
-                    businessCategories.includes(category)
-                );
+
+            const businessesWithAllCategories = businesses.filter((business) => {
+                const businessCategories = business.categories.map((category) => category.alias);
+                return categoryAliases.every((alias) => businessCategories.includes(alias));
             });
-            if (filteredBusinesses.length >= categories.length) {
-                res.status(200).json({ yelpAPI: filteredBusinesses });
+
+            if (businessesWithAllCategories.length > 0) {
+                return res.status(200).json({ yelpAPI: businessesWithAllCategories });
             } else {
-                res.status(201).json({ yelpAPI: businesses });
+                return res.status(201).json({ yelpAPI: businesses });
             }
         } catch (error) {
             res.status(500).json({ error: error.message });
