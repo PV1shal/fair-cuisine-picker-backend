@@ -1,10 +1,14 @@
 'use strict';
 import yelp from 'yelp-fusion';
+import Bottleneck from "bottleneck";
+
+const limiter = new Bottleneck({ maxConcurrent: 5, minTime: 200 });
+
 
 // Place holder for Yelp Fusion's API Key. Grab them
 // from https://www.yelp.com/developers/v3/manage_app
-// const apiKey = 'uwP7e36zc9a5e7N_GovpMHDJ_v_pcMmRzrHuzvuihfvgD5R8nocAlhUKBPXhgWh_KDbOyoW7D7nRreubcoFjS8vIIM-4CoOqgcHbIfnLsjnZCFvrRMXmTOHN4KlUZHYx';
-const apiKey = 'x0tuvJopUKd3hu3w-5RNbSdVFI67eWgmZvHkEyh2zCYbLN3V-PdansA4shhi5yOMr1cGQ-QO75Z3lSQfDQO66uHbExkwuacXHEfK6k6sz6hS9LaxkehhUpptgWVVZHYx';
+const apiKey = 'GLdNgRGoAmyw7JxRb3-pKrsJMNA6uICwRPID5OWb6E4G7gKNJyb6EqpzMuc11cAib-XRpmly1iUmF4NyBwRPVj9t99ylU-aIWF7MWETnOPA0ZGWyaTy5rrKKhoVVZHYx';
+// const apiKey = 'x0tuvJopUKd3hu3w-5RNbSdVFI67eWgmZvHkEyh2zCYbLN3V-PdansA4shhi5yOMr1cGQ-QO75Z3lSQfDQO66uHbExkwuacXHEfK6k6sz6hS9LaxkehhUpptgWVVZHYx';
 
 const client = yelp.client(apiKey);
 
@@ -40,6 +44,7 @@ export default class yelpAPI {
                 return res.status(201).json({ yelpAPI: businesses });
             }
         } catch (error) {
+            console.log(error);
             res.status(500).json({ error: error.message });
         }
     }
@@ -47,8 +52,8 @@ export default class yelpAPI {
     static async apiGetBusinessAndReviewsById(req, res, next) {
         const businessId = req.params.id || {};
         try {
-            const response = await client.business(businessId);
-            const reviews = await client.reviews(businessId, { limit: 15 });
+            const response = await limiter.schedule(() => client.business(businessId));
+            const reviews = await limiter.schedule(() => client.reviews(businessId, { limit: 15 }));
             var { error } = response;
             if (error) {
                 res.status(400).json({ error: "Unable to get business" });
@@ -56,6 +61,7 @@ export default class yelpAPI {
                 res.json({ business: response.jsonBody, reviews: reviews.jsonBody.reviews });
             }
         } catch (error) {
+            console.log(error);
             res.status(500).json({ error: error.message });
         }
     }
