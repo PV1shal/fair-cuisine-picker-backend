@@ -15,6 +15,7 @@ export default class yelpAPI {
             location: userPreferences.location,
             radius: userPreferences.radius || 10000,
             term: categories.join(','),
+            categories: "restaurants",
         };
         try {
             const response = await client.search(searchRequest);
@@ -35,8 +36,6 @@ export default class yelpAPI {
             res.status(500).json({ error: error.message });
         }
     }
-
-
 
     static async apiGetBusinessAndReviewsById(req, res, next) {
         const businessId = req.params.id || {};
