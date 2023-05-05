@@ -3,7 +3,8 @@ import yelp from 'yelp-fusion';
 
 // Place holder for Yelp Fusion's API Key. Grab them
 // from https://www.yelp.com/developers/v3/manage_app
-const apiKey = 'uwP7e36zc9a5e7N_GovpMHDJ_v_pcMmRzrHuzvuihfvgD5R8nocAlhUKBPXhgWh_KDbOyoW7D7nRreubcoFjS8vIIM-4CoOqgcHbIfnLsjnZCFvrRMXmTOHN4KlUZHYx';
+// const apiKey = 'uwP7e36zc9a5e7N_GovpMHDJ_v_pcMmRzrHuzvuihfvgD5R8nocAlhUKBPXhgWh_KDbOyoW7D7nRreubcoFjS8vIIM-4CoOqgcHbIfnLsjnZCFvrRMXmTOHN4KlUZHYx';
+const apiKey = 'x0tuvJopUKd3hu3w-5RNbSdVFI67eWgmZvHkEyh2zCYbLN3V-PdansA4shhi5yOMr1cGQ-QO75Z3lSQfDQO66uHbExkwuacXHEfK6k6sz6hS9LaxkehhUpptgWVVZHYx';
 
 const client = yelp.client(apiKey);
 
